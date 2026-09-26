@@ -1,0 +1,8 @@
+<Bindings>
+    <Binding name="REAGENTBANK_OPEN" header="REAGENTBANKUI">
+        ReagentBankUIkeybinds_Open();
+    </Binding>
+    <Binding name="REAGENTBANK_DEPOSIT_ALL">
+        ReagentBankUIkeybinds_DepositAll();
+    </Binding>
+</Bindings>
