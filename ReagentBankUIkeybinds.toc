@@ -1,8 +1,9 @@
 ## Interface: 30300
 ## Title: Reagent Bank UI Keybinds
-## Notes: Adds Open Rbank and Deposit All keybinds. Requires Reagent Bank UI.
+## Notes: Keybinds and /rbk commands for Reagent Bank UI. Requires Reagent Bank UI.
 ## Author: Aethro
-## Version: 1.0.0
+## Version: 1.0.1
 ## RequiredDeps: ReagentBankUI
+## SavedVariablesPerCharacter: ReagentBankUIkeybindsDB
 
 ReagentBankUIkeybinds.lua
