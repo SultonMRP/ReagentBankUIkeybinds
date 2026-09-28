@@ -6,7 +6,7 @@ if not ADDON_NAME or ADDON_NAME == "" then
     ADDON_NAME = "ReagentBankUIkeybinds"
 end
 
-_G.BINDING_NAME_REAGENTBANK_OPEN = "Open Rbank"
+_G.BINDING_NAME_REAGENTBANK_OPEN = "Toggle Rbank"
 _G.BINDING_NAME_REAGENTBANK_DEPOSIT_ALL = "Deposit All"
 
 local COMMAND_OPEN = ".rbank"
@@ -137,7 +137,27 @@ local function HookParentAuctionShopping()
     end
 end
 
+local function IsMainWindowVisible(rb)
+    local frame = rb and rb.frame
+    if not frame then
+        return false
+    end
+    if frame.IsVisible and frame:IsVisible() then
+        return true
+    end
+    if frame.IsShown and frame:IsShown() then
+        return true
+    end
+    return false
+end
+
 function ReagentBankUIkeybinds_Open()
+    local rb = GetController()
+    if rb and IsMainWindowVisible(rb) and rb.Close then
+        rb:Close()
+        return
+    end
+
     SendChatMessage(COMMAND_OPEN, "SAY")
 end
 

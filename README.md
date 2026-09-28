@@ -17,7 +17,7 @@ These appear in the existing **Reagent Bank UI** category:
 
 | Bind | What it does |
 | --- | --- |
-| **Open Rbank** | Opens the reagent bank window (`.rbank`) |
+| **Toggle Rbank** | Opens or closes the reagent bank window (`.rbank` / close) |
 | **Deposit All** | Deposits all reagents without showing the UI (`.rbank deposit all`) |
 
 ## Commands

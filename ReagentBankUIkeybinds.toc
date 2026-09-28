@@ -2,7 +2,7 @@
 ## Title: Reagent Bank UI Keybinds
 ## Notes: Keybinds and /rbk commands for Reagent Bank UI. Requires Reagent Bank UI.
 ## Author: Aethro
-## Version: 1.0.1
+## Version: 1.1.0
 ## RequiredDeps: ReagentBankUI
 ## SavedVariablesPerCharacter: ReagentBankUIkeybindsDB
 
