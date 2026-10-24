@@ -17,6 +17,10 @@ local ADDON_PREFIX = "|cffd4a017ReagentBank Keybinds:|r "
 local hookedShow
 local hookedHide
 local applyingVisibility
+local hookedSendChatMessage
+
+local releaseInput = CreateFrame("Frame")
+releaseInput:Hide()
 
 local function GetController()
     return _G.ReagentBankUI
@@ -137,6 +141,97 @@ local function HookParentAuctionShopping()
     end
 end
 
+local function ForEachChatEditBox(fn)
+    local seen = {}
+    local function consider(box)
+        if box and not seen[box] then
+            seen[box] = true
+            fn(box)
+        end
+    end
+
+    consider(_G.ChatFrameEditBox)
+    consider(_G.ChatFrame1EditBox)
+    if DEFAULT_CHAT_FRAME then
+        consider(DEFAULT_CHAT_FRAME.editBox)
+    end
+end
+
+local function ChatEditBoxHasDraft()
+    local hasDraft = false
+    ForEachChatEditBox(function(box)
+        if box.IsShown and box:IsShown() and Trim(box:GetText()) ~= "" then
+            hasDraft = true
+        end
+    end)
+    return hasDraft
+end
+
+local function ReleaseWorldInput()
+    if ChatEditBoxHasDraft() then
+        return
+    end
+
+    ForEachChatEditBox(function(box)
+        if box.ClearFocus then
+            box:ClearFocus()
+        end
+        if box.IsShown and box:IsShown() and Trim(box:GetText()) == "" then
+            box:Hide()
+        end
+    end)
+
+    if MoveForwardStop then
+        MoveForwardStop()
+    end
+    if MoveBackwardStop then
+        MoveBackwardStop()
+    end
+    if StrafeLeftStop then
+        StrafeLeftStop()
+    end
+    if StrafeRightStop then
+        StrafeRightStop()
+    end
+end
+
+local function ScheduleReleaseWorldInput()
+    ReleaseWorldInput()
+    releaseInput:Show()
+end
+
+releaseInput:SetScript("OnUpdate", function(self)
+    self:Hide()
+    ReleaseWorldInput()
+end)
+
+local function IsRbankCommand(msg)
+    if type(msg) ~= "string" then
+        return false
+    end
+    return string.sub(string.lower(Trim(msg)), 1, 6) == ".rbank"
+end
+
+local function HookSendChatMessage()
+    if hookedSendChatMessage or not hooksecurefunc then
+        return
+    end
+
+    hooksecurefunc("SendChatMessage", function(msg)
+        if IsRbankCommand(msg) then
+            ScheduleReleaseWorldInput()
+        end
+    end)
+    hookedSendChatMessage = true
+end
+
+local function SendServerChat(message)
+    SendChatMessage(message, "SAY")
+    ScheduleReleaseWorldInput()
+end
+
+HookSendChatMessage()
+
 local function IsMainWindowVisible(rb)
     local frame = rb and rb.frame
     if not frame then
@@ -158,7 +253,7 @@ function ReagentBankUIkeybinds_Open()
         return
     end
 
-    SendChatMessage(COMMAND_OPEN, "SAY")
+    SendServerChat(COMMAND_OPEN)
 end
 
 function ReagentBankUIkeybinds_DepositAll()
@@ -167,7 +262,7 @@ function ReagentBankUIkeybinds_DepositAll()
         rb.autoDepositSuppressViewUntil = GetTime() + SUPPRESS_VIEW_SECONDS
     end
 
-    SendChatMessage(COMMAND_DEPOSIT_ALL, "SAY")
+    SendServerChat(COMMAND_DEPOSIT_ALL)
 end
 
 function ReagentBankUIkeybinds_PrintHelp()
@@ -230,11 +325,13 @@ events:SetScript("OnEvent", function(self, event, arg1)
     if event == "ADDON_LOADED" then
         if arg1 == ADDON_NAME then
             GetDB()
+            HookSendChatMessage()
             HookParentAuctionShopping()
         end
         return
     end
 
+    HookSendChatMessage()
     HookParentAuctionShopping()
     ApplyAuctionShoppingHighStrata()
     if event == "AUCTION_HOUSE_SHOW" then
