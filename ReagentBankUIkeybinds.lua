@@ -173,6 +173,7 @@ end
 function ReagentBankUIkeybinds_PrintHelp()
     DEFAULT_CHAT_FRAME:AddMessage("|cffd4a017ReagentBank Keybinds|r")
     DEFAULT_CHAT_FRAME:AddMessage("|cffffffff/rbk|r - show this help")
+    DEFAULT_CHAT_FRAME:AddMessage("|cffffffff/rbk deposit|r - deposit all reagents without showing the UI")
     DEFAULT_CHAT_FRAME:AddMessage("|cffffffff/rbk ahw|r - toggle AH shopping list window")
 end
 
@@ -205,6 +206,11 @@ SlashCmdList["REAGENTBANKUIKEYBINDS"] = function(msg)
 
     if msg == "" or msg == "help" then
         ReagentBankUIkeybinds_PrintHelp()
+        return
+    end
+
+    if msg == "deposit" or msg == "deposit all" then
+        ReagentBankUIkeybinds_DepositAll()
         return
     end
 

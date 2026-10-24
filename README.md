@@ -25,6 +25,7 @@ These appear in the existing **Reagent Bank UI** category:
 | Command | What it does |
 | --- | --- |
 | `/rbk` | Show this help |
+| `/rbk deposit` | Deposit all reagents without showing the UI (same as the **Deposit All** bind) |
 | `/rbk ahw` | Toggle the Auction House shopping list window |
 
 `/rbk ahw` is saved **per character**. Closing the list with X also saves it hidden for that character.
