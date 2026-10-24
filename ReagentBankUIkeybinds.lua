@@ -180,19 +180,6 @@ local function ReleaseWorldInput()
             box:Hide()
         end
     end)
-
-    if MoveForwardStop then
-        MoveForwardStop()
-    end
-    if MoveBackwardStop then
-        MoveBackwardStop()
-    end
-    if StrafeLeftStop then
-        StrafeLeftStop()
-    end
-    if StrafeRightStop then
-        StrafeRightStop()
-    end
 end
 
 local function ScheduleReleaseWorldInput()
