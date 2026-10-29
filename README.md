@@ -35,3 +35,4 @@ These appear in the existing **Reagent Bank UI** category:
 - Keys start unbound.
 - Deposit All uses ReagentBankUI’s suppress-view flag so the main window stays closed.
 - The AH shopping list window is created by ReagentBankUI; this addon only toggles it and keeps it on the High strata.
+- Deposit Gold and Withdraw Gold stay on the main list only; they hide in a category until ReagentBankUI does that itself.

@@ -18,6 +18,8 @@ local hookedShow
 local hookedHide
 local applyingVisibility
 local hookedSendChatMessage
+local hookedGoldVisibility
+local goldButtonsParentOwned
 
 local releaseInput = CreateFrame("Frame")
 releaseInput:Hide()
@@ -107,6 +109,65 @@ local function ApplyAuctionShoppingVisibility()
         ApplyAuctionShoppingHighStrata()
     end
     applyingVisibility = false
+end
+
+local function ButtonIsShown(button)
+    return button and button.IsShown and button:IsShown()
+end
+
+local function GetGoldButtons(rb)
+    local frame = rb and rb.frame
+    if not frame then
+        return
+    end
+    return frame.goldDeposit, frame.goldWithdraw
+end
+
+local function ApplyGoldButtonVisibility(rb, view)
+    local deposit, withdraw = GetGoldButtons(rb)
+    if not deposit or not withdraw then
+        return
+    end
+
+    if view ~= "root" then
+        if not ButtonIsShown(deposit) and not ButtonIsShown(withdraw) then
+            goldButtonsParentOwned = true
+            return
+        end
+
+        goldButtonsParentOwned = false
+        deposit:Hide()
+        withdraw:Hide()
+        return
+    end
+
+    if goldButtonsParentOwned then
+        return
+    end
+
+    deposit:Show()
+    withdraw:Show()
+end
+
+local function HookParentGoldButtons()
+    local rb = GetController()
+    if not rb then
+        return
+    end
+
+    if not hookedGoldVisibility and rb.SetCommonVisibility then
+        local originalSetCommonVisibility = rb.SetCommonVisibility
+        rb.SetCommonVisibility = function(self, view, ...)
+            local result = originalSetCommonVisibility(self, view, ...)
+            ApplyGoldButtonVisibility(self, view)
+            return result
+        end
+        hookedGoldVisibility = true
+    end
+
+    if rb.currentView then
+        ApplyGoldButtonVisibility(rb, rb.currentView)
+    end
 end
 
 local function HookParentAuctionShopping()
@@ -314,12 +375,14 @@ events:SetScript("OnEvent", function(self, event, arg1)
             GetDB()
             HookSendChatMessage()
             HookParentAuctionShopping()
+            HookParentGoldButtons()
         end
         return
     end
 
     HookSendChatMessage()
     HookParentAuctionShopping()
+    HookParentGoldButtons()
     ApplyAuctionShoppingHighStrata()
     if event == "AUCTION_HOUSE_SHOW" then
         ApplyAuctionShoppingVisibility()
